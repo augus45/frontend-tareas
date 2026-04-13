@@ -14,12 +14,15 @@ function App() {
   const [passwordRegistro, setPasswordRegistro] = useState('')
 
   useEffect(() => {
-  if(token) {
+  if (token) {
     fetch('https://api-tareas-production-f194.up.railway.app/tareas', {
-      headers: { 'Authorization': `Bearer ${token}` }
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     })
       .then(res => res.json())
       .then(data => setTareas(data))
+      .catch(err => console.error('Error al cargar tareas:', err))
   }
 }, [token])
 
