@@ -101,6 +101,10 @@ function App() {
     })
     .catch(err => console.error('Error:', err))
 }
+  function cerrarSesion() {
+    setToken(null)
+    localStorage.removeItem('token')
+    setTareas([])
 
   if (!token) {
     return (
