@@ -10,7 +10,7 @@ function App() {
   const [password, setPassword] = useState('')
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/tareas')
+    fetch('https://api-tareas-production-f194.up.railway.app/tareas')
       .then(res => res.json())
       .then(data => setTareas(data))
   }, [])
@@ -20,7 +20,7 @@ function App() {
     formData.append('username', email)
     formData.append('password', password)
 
-    fetch('http://127.0.0.1:8000/login', {
+    fetch('https://api-tareas-production-f194.up.railway.app/login', {
       method: 'POST',
       body: formData
     })
@@ -29,7 +29,7 @@ function App() {
   }
 
   function agregarTarea() {
-    fetch('http://127.0.0.1:8000/tareas', {
+    fetch('https://api-tareas-production-f194.up.railway.app/tareas', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ function App() {
   }
 
   function eliminarTarea(id) {
-    fetch(`http://127.0.0.1:8000/tareas/${id}`, {
+    fetch(`https://api-tareas-production-f194.up.railway.app/tareas/${id}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -56,7 +56,7 @@ function App() {
   }
 
   function completarTarea(id) {
-  fetch(`http://127.0.0.1:8000/tareas/${id}/completar`, {
+  fetch(`https://api-tareas-production-f194.up.railway.app/tareas/${id}/completar`, {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${token}`
