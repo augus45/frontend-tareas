@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import './App.css'
 
 function App() {
   const [tareas, setTareas] = useState([])
@@ -54,6 +55,26 @@ function App() {
       })
   }
 
+  function completarTarea(id) {
+  fetch(`http://127.0.0.1:8000/tareas/${id}/completar`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+    .then(res => {
+      if (res.ok) {
+        // Actualizar el estado local
+        setTareas(tareas.map(tarea => 
+          tarea.id === id ? { ...tarea, completada: true } : tarea
+        ))
+      } else {
+        console.error('Error al completar la tarea')
+      }
+    })
+    .catch(err => console.error('Error:', err))
+}
+
   if (!token) {
     return (
       <div>
@@ -66,20 +87,29 @@ function App() {
   }
 
   return (
-    <div>
-      <h1>Mis Tareas</h1>
+  <div className="app-container">
+    <h1>Mis Tareas</h1>
+    <div className="form-agregar">
       <input placeholder="Título" value={titulo} onChange={e => setTitulo(e.target.value)} />
       <input placeholder="Descripción" value={descripcion} onChange={e => setDescripcion(e.target.value)} />
-      <button onClick={agregarTarea}>Agregar tarea</button>
-      <p>Total de tareas: {tareas.length}</p>
-      {tareas.map((tarea) => (
-        <div key={tarea.id}>
-          <p><strong>{tarea.titulo}</strong> — {tarea.descripcion}</p>
-          <button onClick={() => eliminarTarea(tarea.id)}>Eliminar</button>
-        </div>
-      ))}
+      <button className="btn-agregar" onClick={agregarTarea}>Agregar</button>
     </div>
-  )
+    <p className="total">Total de tareas: {tareas.length}</p>
+    {tareas.map((tarea) => (
+      <div key={tarea.id} className={`tarea-item ${tarea.completada ? 'tarea-completada' : ''}`}>
+        <p className="tarea-titulo" style={{ textDecoration: tarea.completada ? 'line-through' : 'none' }}>
+          {tarea.titulo} — {tarea.descripcion} {tarea.completada && '✅'}
+        </p>
+        <div className="tarea-acciones">
+          <button className="btn-eliminar" onClick={() => eliminarTarea(tarea.id)}>Eliminar</button>
+          {!tarea.completada && (
+            <button className="btn-completar" onClick={() => completarTarea(tarea.id)}>✓</button>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+)
 }
 
 export default App
