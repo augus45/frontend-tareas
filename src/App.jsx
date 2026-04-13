@@ -9,37 +9,47 @@ function App() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [modoRegistro, setModoRegistro] = useState(false)
-  const [nombreRegistro, setNombreRegistro] = useState('')
   const [emailRegistro, setEmailRegistro] = useState('')
   const [passwordRegistro, setPasswordRegistro] = useState('')
 
+  // Cargar token guardado al iniciar
   useEffect(() => {
-  if (token) {
-    fetch('https://api-tareas-production-f194.up.railway.app/tareas', {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-      .then(res => res.json())
-      .then(data => setTareas(data))
-      .catch(err => console.error('Error al cargar tareas:', err))
-  }
-}, [token])
+    const tokenGuardado = localStorage.getItem('token')
+    if (tokenGuardado) {
+      setToken(tokenGuardado)
+    }
+  }, [])
+
+  // Cargar tareas SOLO cuando hay token
+  useEffect(() => {
+    if (token) {
+      fetch('https://api-tareas-production-f194.up.railway.app/tareas', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(res => res.json())
+        .then(data => setTareas(data))
+        .catch(err => console.error('Error al cargar tareas:', err))
+    }
+  }, [token])
 
   function registrar() {
     fetch('https://api-tareas-production-f194.up.railway.app/register', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: emailRegistro,
         password: passwordRegistro
       })
     })
-    .then(res => res.json())
-    .then(data => {
-      if(data.mensaje) alert('Registro exitoso, ahora inicia sesión')
-      setModoRegistro(false)
-    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.mensaje) {
+          alert('Registro exitoso, ahora inicia sesión')
+          setModoRegistro(false)
+        }
+      })
   }
 
   function login() {
@@ -52,7 +62,10 @@ function App() {
       body: formData
     })
       .then(res => res.json())
-      .then(data => setToken(data.access_token))
+      .then(data => {
+        setToken(data.access_token)
+        localStorage.setItem('token', data.access_token)
+      })
   }
 
   function agregarTarea() {
@@ -83,37 +96,38 @@ function App() {
   }
 
   function completarTarea(id) {
-  fetch(`https://api-tareas-production-f194.up.railway.app/tareas/${id}/completar`, {
-    method: 'PUT',
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  })
-    .then(res => {
-      if (res.ok) {
-        // Actualizar el estado local
-        setTareas(tareas.map(tarea => 
-          tarea.id === id ? { ...tarea, completada: true } : tarea
-        ))
-      } else {
-        console.error('Error al completar la tarea')
+    fetch(`https://api-tareas-production-f194.up.railway.app/tareas/${id}/completar`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
     })
-    .catch(err => console.error('Error:', err))
-}
+      .then(res => {
+        if (res.ok) {
+          setTareas(tareas.map(tarea =>
+            tarea.id === id ? { ...tarea, completada: true } : tarea
+          ))
+        } else {
+          console.error('Error al completar la tarea')
+        }
+      })
+      .catch(err => console.error('Error:', err))
+  }
+
   function cerrarSesion() {
     setToken(null)
     localStorage.removeItem('token')
     setTareas([])
+  }
 
+  // Pantalla de login/registro
   if (!token) {
     return (
       <div className="login-container">
         <div className="login-card">
           <h1>{modoRegistro ? 'Crear cuenta' : 'Iniciar sesión'}</h1>
-          
+
           {modoRegistro ? (
-            // Formulario de registro
             <>
               <input
                 type="email"
@@ -135,7 +149,6 @@ function App() {
               </button>
             </>
           ) : (
-            // Formulario de login
             <>
               <input
                 type="email"
@@ -162,6 +175,7 @@ function App() {
     )
   }
 
+  // Pantalla principal de tareas
   return (
     <div className="app-container">
       <div className="header">
@@ -170,7 +184,7 @@ function App() {
           🚪 Cerrar sesión
         </button>
       </div>
-      
+
       <div className="form-agregar">
         <input
           placeholder="Título"
@@ -186,9 +200,9 @@ function App() {
           Agregar
         </button>
       </div>
-      
+
       <p className="total">Total de tareas: {tareas.length}</p>
-      
+
       {tareas.map((tarea) => (
         <div key={tarea.id} className={`tarea-item ${tarea.completada ? 'tarea-completada' : ''}`}>
           <p className="tarea-titulo" style={{ textDecoration: tarea.completada ? 'line-through' : 'none' }}>
@@ -207,7 +221,7 @@ function App() {
         </div>
       ))}
     </div>
- )
+  )
 }
 
 export default App
