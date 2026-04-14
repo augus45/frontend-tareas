@@ -13,6 +13,9 @@ function App() {
   const [passwordRegistro, setPasswordRegistro] = useState('')
   const [filtro, setFiltro] = useState('todas')
   const [prioridad, setPrioridad] = useState('media')
+  const [tareaEditando, setTareaEditando] = useState(null)
+  const [tituloEdit, setTituloEdit] = useState('')
+  const [descripcionEdit, setDescripcionEdit] = useState('')
 
   // Cargar token guardado al iniciar
   useEffect(() => {
@@ -123,6 +126,39 @@ function App() {
       })
       .catch(err => console.error('Error:', err))
   }
+  function guardarEdicion(id) {
+  fetch(`https://api-tareas-production-f194.up.railway.app/tareas/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json', 
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      titulo: tituloEdit,
+      descripcion: descripcionEdit,
+      prioridad: prioridad
+    })
+  })
+    .then(res => {
+      if (res.ok) {
+        setTareas(tareas.map(tarea =>
+          tarea.id === id ? {
+            ...tarea,
+            titulo: tituloEdit,
+            descripcion: descripcionEdit,
+            prioridad: prioridad
+          } : tarea
+        ))
+        setTareaEditando(null)
+        setTituloEdit('')
+        setDescripcionEdit('')
+        setPrioridad('media') // Resetear prioridad después de editar
+      } else {
+        console.error('Error al actualizar la tarea')
+      }
+    })
+    .catch(err => console.error('Error:', err))
+}
 
   function cerrarSesion() {
     setToken(null)
@@ -229,20 +265,36 @@ function App() {
   <button onClick={() => setFiltro('completadas')} className={filtro === 'completadas' ? 'filtro-activo' : ''}>Completadas</button>
 </div>
 
-      {tareasFiltradas.map((tarea) => (
+     {tareasFiltradas.map((tarea) => (
   <div key={tarea.id} className={`tarea-item ${tarea.completada ? 'tarea-completada' : ''}`}>
     <div>
-      <span className={`badge-prioridad prioridad-${tarea.prioridad}`}>
-        {tarea.prioridad}
-      </span>
-      <p className="tarea-titulo" style={{ textDecoration: tarea.completada ? 'line-through' : 'none' }}>
-        {tarea.titulo} — {tarea.descripcion} {tarea.completada && '✅'}
-      </p>
+      <span className={`badge-prioridad prioridad-${tarea.prioridad}`}>{tarea.prioridad}</span>
+      {tareaEditando === tarea.id ? (
+        <>
+          <input value={tituloEdit} onChange={e => setTituloEdit(e.target.value)} />
+          <input value={descripcionEdit} onChange={e => setDescripcionEdit(e.target.value)} />
+        </>
+      ) : (
+        <p className="tarea-titulo" style={{ textDecoration: tarea.completada ? 'line-through' : 'none' }}>
+          {tarea.titulo} — {tarea.descripcion} {tarea.completada && '✅'}
+        </p>
+      )}
     </div>
     <div className="tarea-acciones">
       <button className="btn-eliminar" onClick={() => eliminarTarea(tarea.id)}>Eliminar</button>
       {!tarea.completada && (
-        <button className="btn-completar" onClick={() => completarTarea(tarea.id)}>✓</button>
+        <>
+          {tareaEditando === tarea.id ? (
+            <button className="btn-agregar" onClick={() => guardarEdicion(tarea.id)}>💾</button>
+          ) : (
+            <button className="btn-agregar" onClick={() => {
+              setTareaEditando(tarea.id)
+              setTituloEdit(tarea.titulo)
+              setDescripcionEdit(tarea.descripcion)
+            }}>✏️</button>
+          )}
+          <button className="btn-completar" onClick={() => completarTarea(tarea.id)}>✓</button>
+        </>
       )}
     </div>
   </div>
