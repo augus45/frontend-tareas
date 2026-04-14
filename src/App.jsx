@@ -12,6 +12,7 @@ function App() {
   const [emailRegistro, setEmailRegistro] = useState('')
   const [passwordRegistro, setPasswordRegistro] = useState('')
   const [filtro, setFiltro] = useState('todas')
+  const [prioridad, setPrioridad] = useState('media')
 
   // Cargar token guardado al iniciar
   useEffect(() => {
@@ -76,10 +77,18 @@ function App() {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ titulo, descripcion })
+      body: JSON.stringify({ 
+        titulo, 
+        descripcion,
+        prioridad })
     })
       .then(res => res.json())
-      .then(tarea => setTareas([...tareas, tarea]))
+      .then(tarea => {
+        setTareas([...tareas, tarea])
+        setTitulo('')
+        setDescripcion('')
+        setPrioridad('media')
+      })
   }
 
   function eliminarTarea(id) {
@@ -192,6 +201,11 @@ function App() {
       </div>
 
       <div className="form-agregar">
+        <select value={prioridad} onChange={e => setPrioridad(e.target.value)}>
+  <option value="baja">🟢 Baja</option>
+  <option value="media">🟡 Media</option>
+  <option value="alta">🔴 Alta</option>
+</select>
         <input
           placeholder="Título"
           value={titulo}
@@ -216,22 +230,23 @@ function App() {
 </div>
 
       {tareasFiltradas.map((tarea) => (
-        <div key={tarea.id} className={`tarea-item ${tarea.completada ? 'tarea-completada' : ''}`}>
-          <p className="tarea-titulo" style={{ textDecoration: tarea.completada ? 'line-through' : 'none' }}>
-            {tarea.titulo} — {tarea.descripcion} {tarea.completada && '✅'}
-          </p>
-          <div className="tarea-acciones">
-            <button className="btn-eliminar" onClick={() => eliminarTarea(tarea.id)}>
-              Eliminar
-            </button>
-            {!tarea.completada && (
-              <button className="btn-completar" onClick={() => completarTarea(tarea.id)}>
-                ✓
-              </button>
-            )}
-          </div>
-        </div>
-      ))}
+  <div key={tarea.id} className={`tarea-item ${tarea.completada ? 'tarea-completada' : ''}`}>
+    <div>
+      <span className={`badge-prioridad prioridad-${tarea.prioridad}`}>
+        {tarea.prioridad}
+      </span>
+      <p className="tarea-titulo" style={{ textDecoration: tarea.completada ? 'line-through' : 'none' }}>
+        {tarea.titulo} — {tarea.descripcion} {tarea.completada && '✅'}
+      </p>
+    </div>
+    <div className="tarea-acciones">
+      <button className="btn-eliminar" onClick={() => eliminarTarea(tarea.id)}>Eliminar</button>
+      {!tarea.completada && (
+        <button className="btn-completar" onClick={() => completarTarea(tarea.id)}>✓</button>
+      )}
+    </div>
+  </div>
+))}
     </div>
   )
 }
