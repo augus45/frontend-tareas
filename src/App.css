@@ -270,3 +270,96 @@ button:hover {
   background: #2ed573;
   color: white;
 }
+/* Botón de tema */
+.btn-tema {
+  background: #667eea;
+  color: white;
+  font-size: 20px;
+  padding: 8px 16px;
+  margin-right: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-tema:hover {
+  opacity: 0.85;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* ========== MODO OSCURO ========== */
+.dark-mode {
+  background: #1a1a2e;
+}
+
+.dark-mode .app-container {
+  background: #16213e;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.dark-mode h1 {
+  color: #a29bfe;
+}
+
+.dark-mode input,
+.dark-mode select {
+  background: #0f3460;
+  border-color: #2c3e66;
+  color: #eee;
+}
+
+.dark-mode input:focus,
+.dark-mode select:focus {
+  border-color: #a29bfe;
+}
+
+.dark-mode .tarea-item {
+  background: #0f3460;
+  border-color: #2c3e66;
+}
+
+.dark-mode .tarea-titulo {
+  color: #eee;
+}
+
+.dark-mode .total {
+  color: #aaa;
+}
+
+.dark-mode .filtros button {
+  background: #0f3460;
+  color: #ddd;
+}
+
+.dark-mode .filtros .filtro-activo {
+  background: #a29bfe;
+  color: white;
+}
+
+.dark-mode .login-card {
+  background: #16213e;
+}
+
+.dark-mode .login-card h1 {
+  color: #a29bfe;
+}
+
+.dark-mode .login-card input {
+  background: #0f3460;
+  border-color: #2c3e66;
+  color: #eee;
+}
+
+.dark-mode .btn-secundario {
+  border-color: #a29bfe;
+  color: #a29bfe;
+}
+
+.dark-mode .btn-secundario:hover {
+  background: #a29bfe;
+  color: #16213e;
+}

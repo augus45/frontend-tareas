@@ -16,8 +16,8 @@ function App() {
   const [tareaEditando, setTareaEditando] = useState(null)
   const [tituloEdit, setTituloEdit] = useState('')
   const [descripcionEdit, setDescripcionEdit] = useState('')
+  const [temaOscuro, setTemaOscuro] = useState(false)
 
-  // Cargar token guardado al iniciar
   useEffect(() => {
     const tokenGuardado = localStorage.getItem('token')
     if (tokenGuardado) {
@@ -25,7 +25,6 @@ function App() {
     }
   }, [])
 
-  // Cargar tareas SOLO cuando hay token
   useEffect(() => {
     if (token) {
       fetch('https://api-tareas-production-f194.up.railway.app/tareas', {
@@ -152,7 +151,7 @@ function App() {
         setTareaEditando(null)
         setTituloEdit('')
         setDescripcionEdit('')
-        setPrioridad('media') // Resetear prioridad después de editar
+        setPrioridad('media') 
       } else {
         console.error('Error al actualizar la tarea')
       }
@@ -171,7 +170,6 @@ function App() {
     return true
   })
 
-  // Pantalla de login/registro
   if (!token) {
     return (
       <div className="login-container">
@@ -226,11 +224,17 @@ function App() {
     )
   }
 
-  // Pantalla principal de tareas
   return (
-    <div className="app-container">
+    <div className={`app-container ${temaOscuro ? 'dark-mode' : ''}`}>
       <div className="header">
         <h1>Mis Tareas</h1>
+        <div className="header-buttons">
+          <button className="btn-Tema"
+          onClick={() => setTemaOscuro(!temaOscuro)}
+          >
+             {temaOscuro ? '☀️' : '🌙'}
+          </button>
+        </div>
         <button className="btn-cerrar" onClick={cerrarSesion}>
           🚪 Cerrar sesión
         </button>
