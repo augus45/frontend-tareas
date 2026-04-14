@@ -11,6 +11,7 @@ function App() {
   const [modoRegistro, setModoRegistro] = useState(false)
   const [emailRegistro, setEmailRegistro] = useState('')
   const [passwordRegistro, setPasswordRegistro] = useState('')
+  const [filtro, setFiltro] = useState('todas')
 
   // Cargar token guardado al iniciar
   useEffect(() => {
@@ -119,6 +120,11 @@ function App() {
     localStorage.removeItem('token')
     setTareas([])
   }
+  const tareasFiltradas = tareas.filter(tarea => {
+    if (filtro === 'completadas') return tarea.completada === true
+    if (filtro === 'pendientes') return tarea.completada === false
+    return true
+  })
 
   // Pantalla de login/registro
   if (!token) {
@@ -203,7 +209,13 @@ function App() {
 
       <p className="total">Total de tareas: {tareas.length}</p>
 
-      {tareas.map((tarea) => (
+      <div className="filtros">
+  <button onClick={() => setFiltro('todas')} className={filtro === 'todas' ? 'filtro-activo' : ''}>Todas</button>
+  <button onClick={() => setFiltro('pendientes')} className={filtro === 'pendientes' ? 'filtro-activo' : ''}>Pendientes</button>
+  <button onClick={() => setFiltro('completadas')} className={filtro === 'completadas' ? 'filtro-activo' : ''}>Completadas</button>
+</div>
+
+      {tareasFiltradas.map((tarea) => (
         <div key={tarea.id} className={`tarea-item ${tarea.completada ? 'tarea-completada' : ''}`}>
           <p className="tarea-titulo" style={{ textDecoration: tarea.completada ? 'line-through' : 'none' }}>
             {tarea.titulo} — {tarea.descripcion} {tarea.completada && '✅'}

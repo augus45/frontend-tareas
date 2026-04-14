@@ -174,3 +174,20 @@ button:hover {
   padding: 8px 16px;
   font-size: 14px;
 }
+.filtros {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.filtros button {
+  background: #e8e8f0;
+  color: #666;
+  padding: 6px 16px;
+  font-size: 13px;
+}
+
+.filtro-activo {
+  background: #667eea !important;
+  color: white !important;
+}
