@@ -27,7 +27,7 @@ function App() {
 
   useEffect(() => {
     if (token) {
-      fetch('https://api-tareas-production-f194.up.railway.app/tareas', {
+      fetch('http://localhost:8000/tareas', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -39,7 +39,7 @@ function App() {
   }, [token])
 
   function registrar() {
-    fetch('https://api-tareas-production-f194.up.railway.app/register', {
+    fetch('http://localhost:8000/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -61,7 +61,7 @@ function App() {
     formData.append('username', email)
     formData.append('password', password)
 
-    fetch('https://api-tareas-production-f194.up.railway.app/login', {
+    fetch('http://localhost:8000/login', {
       method: 'POST',
       body: formData
     })
@@ -73,7 +73,7 @@ function App() {
   }
 
   function agregarTarea() {
-    fetch('https://api-tareas-production-f194.up.railway.app/tareas', {
+    fetch('http://localhost:8000/tareas', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -84,17 +84,27 @@ function App() {
         descripcion,
         prioridad })
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          if (res.status === 401) {
+            cerrarSesion();
+            alert("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.");
+          }
+          throw new Error('Error al agregar la tarea');
+        }
+        return res.json();
+      })
       .then(tarea => {
         setTareas([...tareas, tarea])
         setTitulo('')
         setDescripcion('')
         setPrioridad('media')
       })
+      .catch(err => console.error(err))
   }
 
   function eliminarTarea(id) {
-    fetch(`https://api-tareas-production-f194.up.railway.app/tareas/${id}`, {
+    fetch(`http://localhost:8000/tareas/${id}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -108,7 +118,7 @@ function App() {
   }
 
   function completarTarea(id) {
-    fetch(`https://api-tareas-production-f194.up.railway.app/tareas/${id}/completar`, {
+    fetch(`http://localhost:8000/tareas/${id}/completar`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -126,7 +136,7 @@ function App() {
       .catch(err => console.error('Error:', err))
   }
   function guardarEdicion(id) {
-  fetch(`https://api-tareas-production-f194.up.railway.app/tareas/${id}`, {
+  fetch(`http://localhost:8000/tareas/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json', 
@@ -229,10 +239,10 @@ function App() {
       <div className="header">
         <h1>Mis Tareas</h1>
         <div className="header-buttons">
-          <button className="btn-Tema"
-          onClick={() => setTemaOscuro(!temaOscuro)}
+          <button className="btn-tema"
+            onClick={() => setTemaOscuro(!temaOscuro)}
           >
-             {temaOscuro ? '☀️' : '🌙'}
+            {temaOscuro ? '☀️' : '🌙'}
           </button>
         </div>
         <button className="btn-cerrar" onClick={cerrarSesion}>
@@ -261,7 +271,7 @@ function App() {
         </button>
       </div>
 
-      <p className="total">Total de tareas: {tareas.length}</p>
+      <p className="total">Mostrando {tareasFiltradas.length} de {tareas.length} tareas</p>
 
       <div className="filtros">
   <button onClick={() => setFiltro('todas')} className={filtro === 'todas' ? 'filtro-activo' : ''}>Todas</button>
