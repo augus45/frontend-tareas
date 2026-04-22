@@ -85,6 +85,14 @@ button:hover {
   margin-bottom: 12px;
   background: #f8f9ff;
   border: 1px solid #e8e8f0;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tarea-item > div:first-child {
+  flex: 1 1 50%;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .tarea-completada {
@@ -99,6 +107,7 @@ button:hover {
 .tarea-acciones {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .total {

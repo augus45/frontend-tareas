@@ -54,8 +54,14 @@ function App() {
         if (data.mensaje) {
           alert('Registro exitoso, ahora inicia sesión')
           setModoRegistro(false)
+          setEmailRegistro('')
+          setPasswordRegistro('')
+        } else {
+          alert(data.detail || 'Error al registrar la cuenta')
+          setPasswordRegistro('')
         }
       })
+      .catch(err => alert('Error de conexión con el servidor'))
   }
 
   function login() {
@@ -69,9 +75,17 @@ function App() {
     })
       .then(res => res.json())
       .then(data => {
-        setToken(data.access_token)
-        localStorage.setItem('token', data.access_token)
+        if (data.access_token) {
+          setToken(data.access_token)
+          localStorage.setItem('token', data.access_token)
+          setEmail('')
+          setPassword('')
+        } else {
+          alert(data.detail || 'Email o contraseña incorrectos')
+          setPassword('')
+        }
       })
+      .catch(err => alert('Error de conexión con el servidor'))
   }
 
   function agregarTarea() {
