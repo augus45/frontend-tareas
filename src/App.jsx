@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
 function App() {
   const [tareas, setTareas] = useState([])
   const [titulo, setTitulo] = useState('')
@@ -27,7 +29,7 @@ function App() {
 
   useEffect(() => {
     if (token) {
-      fetch('http://localhost:8000/tareas', {
+      fetch(`${API_URL}/tareas`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -39,7 +41,7 @@ function App() {
   }, [token])
 
   function registrar() {
-    fetch('http://localhost:8000/register', {
+    fetch(`${API_URL}/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -61,7 +63,7 @@ function App() {
     formData.append('username', email)
     formData.append('password', password)
 
-    fetch('http://localhost:8000/login', {
+    fetch(`${API_URL}/login`, {
       method: 'POST',
       body: formData
     })
@@ -73,7 +75,7 @@ function App() {
   }
 
   function agregarTarea() {
-    fetch('http://localhost:8000/tareas', {
+    fetch(`${API_URL}/tareas`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -104,7 +106,7 @@ function App() {
   }
 
   function eliminarTarea(id) {
-    fetch(`http://localhost:8000/tareas/${id}`, {
+    fetch(`${API_URL}/tareas/${id}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -118,7 +120,7 @@ function App() {
   }
 
   function completarTarea(id) {
-    fetch(`http://localhost:8000/tareas/${id}/completar`, {
+    fetch(`${API_URL}/tareas/${id}/completar`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -136,7 +138,7 @@ function App() {
       .catch(err => console.error('Error:', err))
   }
   function guardarEdicion(id) {
-  fetch(`http://localhost:8000/tareas/${id}`, {
+  fetch(`${API_URL}/tareas/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json', 
